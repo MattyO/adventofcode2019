@@ -47,3 +47,11 @@ class OrbitTest(unittest.TestCase):
     def test_total_orbits(self):
         self.assertEqual(total_orbits(self.orbit_collection), 42)
 
+    def test_child_is_added_after_parent(self):
+        orbit_collection = create_orbit_collection(['B)C','COM)B'])
+        self.assertEqual(len(orbit_collection), 3)
+        self.assertEqual(find_orbit(orbit_collection, "B").parent.name, "COM")
+        self.assertEqual(find_orbit(orbit_collection, "C").parent.name, "B")
+
+
+

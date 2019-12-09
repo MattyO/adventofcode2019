@@ -1,6 +1,9 @@
 from collections import namedtuple
 
-Orbit = namedtuple('Orbit', ['name', 'parent'])
+class Orbit():
+    def __init__(self, name, parent=None):
+        self.name = name
+        self.parent = parent
 
 def total_orbits(orbit_array):
     return sum( orbit_count(orbit_array, o.name) for o in orbit_array)
@@ -17,9 +20,12 @@ def create_orbit_collection(input_strs):
         parent_name, child_name = i.split(")")
 
         parent_orbit = find_orbit(collection, parent_name, Orbit(parent_name, None))
-        child_orbit = Orbit(child_name, parent_orbit)
+        child_orbit = find_orbit(collection, child_name, Orbit(child_name, None))
+        child_orbit.parent = parent_orbit
 
-        collection.append(child_orbit)
+        if child_orbit not in collection:
+            collection.append(child_orbit)
+
         if parent_orbit not in collection:
             collection.append(parent_orbit)
 
