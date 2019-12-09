@@ -4,6 +4,7 @@ class Orbit():
     def __init__(self, name, parent=None):
         self.name = name
         self.parent = parent
+        self.children = []
 
 def total_orbits(orbit_array):
     return sum( orbit_count(orbit_array, o.name) for o in orbit_array)
@@ -22,6 +23,8 @@ def create_orbit_collection(input_strs):
         parent_orbit = find_orbit(collection, parent_name, Orbit(parent_name, None))
         child_orbit = find_orbit(collection, child_name, Orbit(child_name, None))
         child_orbit.parent = parent_orbit
+        if child_orbit not in parent_orbit.children:
+            parent_orbit.children.append(child_orbit)
 
         if child_orbit not in collection:
             collection.append(child_orbit)
@@ -36,3 +39,16 @@ def find_orbit(collection, name, default=None):
 
 def create_orbit(collection, parent_name, leaf_name):
     return collection
+
+def parents(collection, o):
+    if o.parent is None:
+        return []
+
+    return [o.parent] + parents(collection, o.parent)
+
+
+def num_jumps(collection, start, end):
+    start_parents_names = set([o.name for o in parents(collection, find_orbit(collection, start)) ])
+    end_parents_names = set([o.name for o in parents(collection, find_orbit(collection, end)) ])
+
+    return len(start_parents_names - end_parents_names) + len(end_parents_names - start_parents_names)
