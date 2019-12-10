@@ -1,11 +1,11 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import unittest
-import sys
-import os
-#sys.path.insert(0, os.getcwd())
-#print(sys.path)
-#import eight
-#print(eight.__file__)
-from eight.picture import layers, layers_with_fewest, num_of
+from eight.picture import layers, layers_with_fewest, num_of, compute_layers
+from itertools import chain, repeat
+def grouper(n, iterable, padvalue=None):
+            return zip(*[chain(iterable, repeat(padvalue, n-1))]*n)
 
 class PictureTest(unittest.TestCase):
 
@@ -37,4 +37,21 @@ class PictureTest(unittest.TestCase):
         two = num_of(layer, '2')
         prod = one * two 
         self.assertEqual(prod, 1806)
+
+    def test_compute_layers(self):
+        new_layer = compute_layers('0222112222120000', 2, 2)
+        self.assertEquals(new_layer,'0110')
+
+    def test_part_two(self):
+        f = open('eight/data.txt')
+        l = f.read().strip()
+        new_layer = compute_layers(l, 25,6)
+        self.assertEqual(len(new_layer), 25*6)
+        self.assertEqual(new_layer, "001100110011110111000110000010100101000010010100100001010010111001001010010000101111010000111001111010010100101000010100100100110010010100001001010010")
+        new_layer = [ '□'  if l =='1' else '■'for l in new_layer]
+        print("\n")
+        for l in grouper(25, new_layer):
+            print("".join(l))
+        print("\n")
+
 
