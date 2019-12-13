@@ -72,3 +72,52 @@ class OrbitTest(unittest.TestCase):
         self.assertEqual(max_position.y, 4)
         self.assertEqual(min_position.x, 4)
         self.assertEqual(min_position.y, 2)
+
+    def test_num_visible_2(self):
+        f = open('ten/data_2.txt')
+        asteroids = create_map(f)
+
+        v = { s: num_visible(s, a, asteroids) for s in asteroids for a in asteroids }
+        (max_position, count) = max(v.items(), key=lambda (k, v): v)
+        self.assertEqual(max_position, Position(5,8))
+        self.assertEquals(count, 33)
+
+    def test_num_visible_3(self):
+        f = open('ten/data_3.txt')
+        asteroids = create_map(f)
+
+        v = { s: num_visible(s, a, asteroids) for s in asteroids for a in asteroids }
+        (max_position, count) = max(v.items(), key=lambda (k, v): v)
+        self.assertEqual(max_position, Position(1,2))
+        self.assertEquals(count, 35)
+
+    def test_num_visible_4(self):
+        f = open('ten/data_4.txt')
+        asteroids = create_map(f)
+
+        v = { s: num_visible(s, a, asteroids) for s in asteroids for a in asteroids }
+        (max_position, count) = max(v.items(), key=lambda (k, v): v)
+        self.assertEqual(max_position, Position(6,3))
+        self.assertEquals(count, 41)
+
+    def test_num_visible_large(self):
+        f = open('ten/data_large.txt')
+        asteroids = create_map(f)
+
+        v = { s: num_visible(s, a, asteroids) for s in asteroids for a in asteroids }
+        (max_position, count) = max(v.items(), key=lambda (k, v): v)
+        self.assertEqual(max_position, Position(11,13))
+        self.assertEquals(count, 210)
+
+    def test_num_visible_puzzle(self):
+        f = open('ten/data_large.txt')
+        asteroids = create_map(f)
+        v = {}
+
+        for s in asteroids:
+            for a in asteroids:
+                v[s] = num_visible(s, a, asteroids)
+                print("{}/{}".format(asteroids.index(s), len(asteroids)))
+        (max_position, count) = max(v.items(), key=lambda (k, v): v)
+        self.assertEqual(max_position, Position(0,0))
+        self.assertEquals(count, 210)
