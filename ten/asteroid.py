@@ -36,23 +36,37 @@ def pos_neg(num):
 
 def blocked_positions(station, asteroid):
     x_dis, y_dis = run_rise(station, asteroid)
+
     if distance(station, asteroid)  in  [0, 1]:
         return []
-    if abs(x_dis) ==0:
-        return [ Position(station.x, y) for y in range(station.y, asteroid.y, pos_neg(y_dis))]
-    if abs(y_dis) ==0:
-        return [ Position(x, station.y) for x in range(station.x, asteroid.x, pos_neg(x_dis))]
 
+    if abs(x_dis) == 0:
+        y_dir = pos_neg(y_dis)
+        return [ Position(station.x, y) for y in range(station.y + y_dir, asteroid.y, y_dir)]
+    if abs(y_dis) == 0:
+        x_dir = pos_neg(x_dis)
+        return [ Position(x, station.y) for x in range(station.x + x_dir, asteroid.x, x_dir)]
+
+    x_dir = pos_neg(x_dis)
+    y_dir = pos_neg(y_dis)
     f = fractions.Fraction(float(abs(x_dis))/abs(y_dis))
 
     if abs(f.numerator) >= abs(x_dis): return []
 
+    x_step= f.numerator * pos_neg(x_dis)
+    y_step= f.denominator* pos_neg(y_dis)
+
+
     bp = [Position(x,y) for (x, y) in zip(
-                range(station.x, asteroid.x, f.numerator * pos_neg(x_dis)),
-                range(station.y, asteroid.y, f.denominator *pos_neg(y_dis)))] 
-    return list(set(bp) - set([station]))
+                range(station.x + x_step, asteroid.x, x_step),
+                range(station.y + y_step, asteroid.y, y_step))] 
+
+    if station == Position(2,2) and asteroid == Position(4,2): import pdb; pdb.set_trace()
+    return filter(lambda bp: bp != station, bp)
 
 
 def num_visible(station, asteroid, asteroids):
-    return len([ a for a in asteroids if not any([ p for p in blocked_positions(station, a) if p in asteroids])])
+    v = [ a for a in asteroids if not any([ p for p in blocked_positions(station, a) if p in asteroids]) and a != station]
+
+    return len(v)
 

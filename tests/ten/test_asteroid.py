@@ -48,12 +48,24 @@ class OrbitTest(unittest.TestCase):
         self.assertTrue(Position(3, 4) in b_pos)
         self.assertTrue(Position(6, 8) in b_pos)
 
+    def test_blocked_position_4_0(self):
+        #import pdb; pdb.set_trace()
+        b_pos = blocked_positions(Position(4, 0), Position(1, 0))
+        self.assertTrue(Position(3, 0) in b_pos)
+        self.assertTrue(Position(2, 0) in b_pos)
+        self.assertEqual(len(b_pos), 2)
+
+    def test_blocked_position_0_2(self):
+        b_pos = blocked_positions(Position(0,2), Position(4,0))
+        self.assertTrue(Position(2, 1) in b_pos)
+        self.assertEqual(len(b_pos), 1)
+
+
     def test_num_visible(self):
         f = open('ten/data_short.txt')
         asteroids = create_map(f)
 
         v = { s: num_visible(s, a, asteroids) for s in asteroids for a in asteroids }
-        print(v)
         (max_position, count) = max(v.items(), key=lambda (k, v): v)
         (min_position, count) = min(v.items(), key=lambda (k, v): v)
         self.assertEqual(max_position.x, 3)
