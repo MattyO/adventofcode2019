@@ -1,5 +1,5 @@
 import unittest
-from ten.asteroid import create_map, sort_by_distance, distance, Position, blocked_positions, num_visible, Vector
+from ten.asteroid import create_map, sort_by_distance, distance, Position,  num_visible, Vector, vaporised
 
 class OrbitTest(unittest.TestCase):
 
@@ -14,63 +14,17 @@ class OrbitTest(unittest.TestCase):
         self.assertEqual(asteroids[1].y, 0)
         self.assertEqual(len(asteroids), 10)
 
-    def test_blocked_positions_zero_distance(self):
-        b_pos = blocked_positions(Position(0, 0), Position(0, 1))
-        self.assertEqual(b_pos, [])
-
-    def test_blocked_positions_same_positions(self):
-        b_pos = blocked_positions(Position(0, 0), Position(0, 1))
-        self.assertEqual(b_pos, [])
-
-    def test_blocked_positions_in_same_x(self):
-        b_pos = blocked_positions(Position(2, 4), Position(2, 0))
-        self.assertTrue(Position(2, 3) in b_pos)
-        self.assertTrue(Position(2, 2) in b_pos)
-        self.assertTrue(Position(2, 1) in b_pos)
-
-    def test_blocked_positions_in_same_y(self):
-        b_pos = blocked_positions(Position(4, 2), Position(0, 2))
-        self.assertTrue(Position(3, 2) in b_pos)
-        self.assertTrue(Position(2, 2) in b_pos)
-        self.assertTrue(Position(1, 2) in b_pos)
-
-    def test_blocked_positions_in_same_10_4(self):
-        b_pos = blocked_positions(Position(0, 0), Position(10, 4))
-        self.assertTrue(Position(5, 2) in b_pos)
-
-    def test_blocked_positions_in_same_3_3(self):
-        b_pos = blocked_positions(Position(0, 0), Position(3, 3))
-        self.assertTrue(Position(1, 1) in b_pos)
-        self.assertTrue(Position(2, 2) in b_pos)
-
-    def test_blocked_positions_3_4(self):
-        b_pos = blocked_positions(Position(0, 0), Position(9, 12))
-        self.assertTrue(Position(3, 4) in b_pos)
-        self.assertTrue(Position(6, 8) in b_pos)
-
-    def test_blocked_position_4_0(self):
-        #import pdb; pdb.set_trace()
-        b_pos = blocked_positions(Position(4, 0), Position(1, 0))
-        self.assertTrue(Position(3, 0) in b_pos)
-        self.assertTrue(Position(2, 0) in b_pos)
-        self.assertEqual(len(b_pos), 2)
-
-    def test_blocked_position_0_2(self):
-        b_pos = blocked_positions(Position(0,2), Position(4,0))
-        self.assertTrue(Position(2, 1) in b_pos)
-        self.assertEqual(len(b_pos), 1)
-
     def test_vector(self):
         computed_vector = Vector.compute(Position(0,0), Position(2,3))
-        self.assertTrue(computed_vector == Vector(3,2))
+        self.assertTrue(computed_vector == Vector(-3,2))
 
     def test_vector_is_reduced(self):
         computed_vector = Vector.compute(Position(0,0), Position(2,2))
-        self.assertTrue(computed_vector == Vector(1,1))
+        self.assertTrue(computed_vector == Vector(-1,1))
 
     def test_vector_no_x_change(self):
         computed_vector = Vector.compute(Position(0,0), Position(0,2))
-        self.assertTrue(Vector.compute(Position(0,0), Position(0,2)) == Vector(1, 0))
+        self.assertTrue(Vector.compute(Position(0,0), Position(0,2)) == Vector(-1, 0))
 
     def test_vector_no_y_change(self):
         computed_vector = Vector.compute(Position(0,0), Position(2,0))
@@ -78,7 +32,7 @@ class OrbitTest(unittest.TestCase):
 
     def test_vector_more_complex_path(self):
         computed_vector = Vector.compute(Position(1,1), Position(4,3))
-        self.assertTrue(Vector.compute(Position(1,1), Position(4,3)) == Vector(2, 3))
+        self.assertTrue(Vector.compute(Position(1,1), Position(4,3)) == Vector(-2, 3))
 
     def test_vector_broken(self):
         computed_vector = Vector.compute(Position(3,4), Position(2,2))
@@ -96,7 +50,6 @@ class OrbitTest(unittest.TestCase):
         asteroids = create_map(f)
 
         v = { s: num_visible(s, asteroids) for s in asteroids }
-        #print(v)
         (max_position, count) = max(v.items(), key=lambda (k, v): v)
         (min_position, count) = min(v.items(), key=lambda (k, v): v)
         self.assertEqual(max_position.x, 3)
@@ -144,10 +97,35 @@ class OrbitTest(unittest.TestCase):
     def test_num_visible_puzzle(self):
         f = open('ten/data_puzzle.txt')
         asteroids = create_map(f)
+        f.close()
 
         v = { s: num_visible(s, asteroids) for s in asteroids }
         (max_position, count) = max(v.items(), key=lambda (k, v): v)
         self.assertEqual(max_position, Position(13,17))
         self.assertEquals(count, 269)
 
+    def test_vector_to_degrees(self):
+        self.assertEqual(Vector(1,0).degrees(),   float(0))
+        self.assertEqual(Vector(1,1).degrees(),   float(45))
+        self.assertEqual(Vector(0,1).degrees(),   float(90))
+        self.assertEqual(Vector(-1,1).degrees(),  float(135))
+        self.assertEqual(Vector(-1,0).degrees(),  float(180))
+        self.assertEqual(Vector(-1,-1).degrees(), float(225))
+        self.assertEqual(Vector(0,-1).degrees(),  float(270))
+        self.assertEqual(Vector(1,-1).degrees(),  float(315))
 
+    def test_vaporized(self):
+        f = open('ten/data_large.txt')
+        asteroids = create_map(f)
+        v = vaporised(Position(11,13),asteroids)
+        self.assertEqual(v[0], Position(11,12))
+        self.assertEqual(v[49], Position(16,9))
+        self.assertEqual(v[198], Position(9, 6))
+        self.assertEqual(v[199], Position(8,2))
+
+    def test_vaporized_puzzle(self):
+        f = open('ten/data_puzzle.txt')
+        asteroids = create_map(f)
+        v = vaporised(Position(13,17),asteroids)
+        self.assertEqual(v[199], Position(6,12))
+        self.assertEqual((v[199].x*100)+ v[199].y, 612)
