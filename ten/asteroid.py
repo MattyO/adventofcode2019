@@ -34,16 +34,16 @@ class Vector():
             if y_dis != 0:
                 y_dir = pos_neg(y_dis)
 
-            #if(station == Position(3,4)):
+            #if(asteroid== Position(3,2) and station == Position(1,8) ):
             #    import pdb; pdb.set_trace()
 
-            f = fractions.Fraction(float(abs(x_dis))/abs(y_dis))
+            f = fractions.Fraction(abs(y_dis), abs(x_dis))
             if f.denominator > abs(x_dis):
                 rise = y_dis
                 run = x_dis
             else:
-                rise = y_dir * f.denominator
-                run = x_dir * f.numerator
+                rise = y_dir * abs(f.numerator)
+                run = x_dir * abs(f.denominator)
 
         return cls(rise, run)
 
@@ -117,6 +117,12 @@ def num_visible(station, asteroids):
     #v = [ a for a in asteroids if not any([ p for p in blocked_positions(station, a) if p in asteroids]) and a != station]
     v = [ Vector.compute(station, a) for a in asteroids if a != station ]
     t = set( (i.rise, i.run) for i in v)
+    #if(station == Position(1,8)) and 33 == len(t):
+    #    for s in asteroids :
+    #        if s == station:
+    #            continue
+    #        print(s)
+    #        print(Vector.compute(station, s))
     #print(t)
 
 

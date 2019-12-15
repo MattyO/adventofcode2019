@@ -85,12 +85,18 @@ class OrbitTest(unittest.TestCase):
         computed_vector_2 = Vector.compute(Position(3,4), Position(1,0))
         self.assertTrue(computed_vector != computed_vector_2 )
 
+    def test_vector_broken_2(self):
+        computed_vector = Vector.compute(Position(0,1), Position(1,5))
+        computed_vector_2 = Vector.compute(Position(0,1), Position(3,8))
+        self.assertTrue(computed_vector != computed_vector_2 )
+
+
     def test_num_visible(self):
         f = open('ten/data_short.txt')
         asteroids = create_map(f)
 
         v = { s: num_visible(s, asteroids) for s in asteroids }
-        print(v)
+        #print(v)
         (max_position, count) = max(v.items(), key=lambda (k, v): v)
         (min_position, count) = min(v.items(), key=lambda (k, v): v)
         self.assertEqual(max_position.x, 3)
@@ -104,51 +110,44 @@ class OrbitTest(unittest.TestCase):
         asteroids = create_map(f)
 
         v = { s: num_visible(s, asteroids) for s in asteroids }
-        print(len(asteroids))
-        print(v)
         (max_position, count) = max(v.items(), key=lambda (k, v): v)
-        print(count)
         self.assertEqual(max_position, Position(5,8))
         self.assertEquals(count, 33)
 
-    #def test_num_visible_3(self):
-    #    f = open('ten/data_3.txt')
-    #    asteroids = create_map(f)
+    def test_num_visible_3(self):
+        f = open('ten/data_3.txt')
+        asteroids = create_map(f)
 
-    #    v = { s: num_visible(s, a, asteroids) for s in asteroids for a in asteroids }
-    #    (max_position, count) = max(v.items(), key=lambda (k, v): v)
-    #    self.assertEqual(max_position, Position(1,2))
-    #    self.assertEquals(count, 35)
+        v = { s: num_visible(s, asteroids) for s in asteroids}
+        (max_position, count) = max(v.items(), key=lambda (k, v): v)
+        self.assertEqual(max_position, Position(1,2))
+        self.assertEquals(count, 35)
 
-    #def test_num_visible_4(self):
-    #    f = open('ten/data_4.txt')
-    #    asteroids = create_map(f)
+    def test_num_visible_4(self):
+        f = open('ten/data_4.txt')
+        asteroids = create_map(f)
 
-    #    v = { s: num_visible(s, a, asteroids) for s in asteroids for a in asteroids }
-    #    (max_position, count) = max(v.items(), key=lambda (k, v): v)
-    #    self.assertEqual(max_position, Position(6,3))
-    #    self.assertEquals(count, 41)
+        v = { s: num_visible(s, asteroids) for s in asteroids }
+        (max_position, count) = max(v.items(), key=lambda (k, v): v)
+        self.assertEqual(max_position, Position(6,3))
+        self.assertEquals(count, 41)
 
-    #def test_num_visible_large(self):
-    #    f = open('ten/data_large.txt')
-    #    asteroids = create_map(f)
+    def test_num_visible_large(self):
+        f = open('ten/data_large.txt')
+        asteroids = create_map(f)
 
-    #    v = { s: num_visible(s, a, asteroids) for s in asteroids for a in asteroids }
-    #    (max_position, count) = max(v.items(), key=lambda (k, v): v)
-    #    self.assertEqual(max_position, Position(11,13))
-    #    self.assertEquals(count, 210)
+        v = { s: num_visible(s, asteroids) for s in asteroids }
+        (max_position, count) = max(v.items(), key=lambda (k, v): v)
+        self.assertEqual(max_position, Position(11,13))
+        self.assertEquals(count, 210)
 
-    #def test_num_visible_puzzle(self):
-    #    f = open('ten/data_large.txt')
-    #    asteroids = create_map(f)
-    #    v = {}
+    def test_num_visible_puzzle(self):
+        f = open('ten/data_puzzle.txt')
+        asteroids = create_map(f)
 
-    #    for s in asteroids:
-    #        for a in asteroids:
-    #            v[s] = num_visible(s, a, asteroids)
-    #            print("{}/{}".format(asteroids.index(s), len(asteroids)))
-    #    (max_position, count) = max(v.items(), key=lambda (k, v): v)
-    #    self.assertEqual(max_position, Position(0,0))
-    #    self.assertEquals(count, 210)
+        v = { s: num_visible(s, asteroids) for s in asteroids }
+        (max_position, count) = max(v.items(), key=lambda (k, v): v)
+        self.assertEqual(max_position, Position(13,17))
+        self.assertEquals(count, 269)
 
 
